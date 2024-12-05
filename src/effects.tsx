@@ -29,7 +29,7 @@ export const CustomEffects = () => {
         bokehScale,
         cOffset,
         eskil,
-        vOffset,
+        vOffset,``
         darkness,
     } = useControls({
         ambientOcclusion: folder({
