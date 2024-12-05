@@ -74,9 +74,9 @@ export const CustomEffects = () => {
                     focusDistance={focusDistance}
                     bokehScale={bokehScale}
                 />
-                <ChromaticAberration
+                {/* <ChromaticAberration
                     offset={cOffset} // color offset
-                />
+                /> */}
                 {/* <Noise premultiply blendFunction={BlendFunction.ADD} /> */}
                 <Vignette eskil={eskil} offset={vOffset} darkness={darkness} />
                 <SSAO

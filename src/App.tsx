@@ -38,12 +38,7 @@ export default function App() {
 						{/* <Center top>
 							<Suzi rotation={[-0.63, 0, 0]} scale={2} />
 						</Center> */}
-						<Center top position={[-2, 0, 1]}>
-							<mesh castShadow>
-								<sphereGeometry args={[0.25, 64, 64]} />
-								<meshStandardMaterial color="lightblue" />
-							</mesh>
-						</Center>
+
 						<Center top position={[0, 0, 18]}>
 							<Boxes />
 						</Center>
@@ -70,7 +65,7 @@ export default function App() {
 						minPolarAngle={0}
 						maxPolarAngle={Math.PI / 2}
 					/>
-					<Environment preset="city" environmentIntensity={0.4} />
+					<Environment preset="city" environmentIntensity={0.1} />
 					<Box
 						receiveShadow
 						position={[0, -3, 0]}
