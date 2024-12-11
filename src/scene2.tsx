@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { useRef, useReducer, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import {
+  BakeShadows,
 	Box,
 	Environment,
 	Instance,
@@ -17,6 +18,7 @@ import { Effects2 } from './effects2'
 import { useControls } from 'leva'
 import { EffectComposer } from '@react-three/postprocessing'
 import { RealismEffect } from './realismEffect'
+import { FlakesTexture } from 'three-stdlib'
 
 const accents = ['#ff4060', '#ffcc00', '#20ffa0', '#4060ff']
 const shuffle = (accent = 0) => [
@@ -54,71 +56,24 @@ export default function SceneBall() {
 	const connectors = useMemo(() => shuffle(accent), [accent])
 	return (
 		<Canvas
-			flat
+
 			shadows
-			dpr={[1, 1]}
+			dpr={1}
 			gl={{ antialias: false }}
 			camera={{ position: [16, 10, 11], fov: 22, near: 1, far: 100 }}
 		>
-			<color attach="background" args={['#141622']} />
-			<ambientLight intensity={0.5} />
+			<color attach="background" args={['#000000']} />
+			{/* <ambientLight intensity={2} /> */}
 			<OrbitControls />
       {/* <pointLight position={[0, 5, 0]} intensity={2} castShadow /> */}
-			<Boxes />
+			{/* <Boxes /> */}
+      <Box args={[5, 5, 5]}>
+        <meshStandardMaterial metalness={0.5} roughness={0.5} color={'#000000'} />
+      </Box>
 			{/* <Stage /> */}
-			<Environment resolution={64} background>
-				<group>
-					{/* <Lightformer
-						form="circle"
-						intensity={100}
-						rotation-x={Math.PI / 2}
-						position={[0, 5, -9]}
-						scale={2}
-					/> */}
-					<Lightformer
-						form="circle"
-						intensity={2}
-						position={[-0.2, 0, -0.2]}
-						scale={2}
-
-					/>
-					<Lightformer
-						form="circle"
-						intensity={2}
-						position={[0.2, 0, 0.2]}
-						scale={2}
-
-					/>
-					<Lightformer
-						form="circle"
-						intensity={1}
-						position={[0, 0.2, 0]}
-						scale={1}
-            // color={'#999'}
-					/>
-          					<Lightformer
-						form="circle"
-						intensity={1}
-						position={[0, -0.2, 0]}
-						scale={1}
-            // color={'#999'}
-					/>
-					<Lightformer
-						form="circle"
-						intensity={2}
-						position={[1, 1, -1]}
-						scale={2}
-					/>
-					<Lightformer
-						form="circle"
-						intensity={2}
-						position={[-1, -1, 1]}
-						scale={2}
-					/>
-				</group>
-			</Environment>
+    <Environment preset='city' background/>
 			<Effects2 />
-
+      <BakeShadows />
 			<Stats />
 		</Canvas>
 	)
@@ -159,54 +114,65 @@ const Boxes = () => {
 		// <Instances  position={[0, 0, 8]}>
 		// 	<boxGeometry args={[1, 1, 1]} />
 		// 	<meshStandardMaterial
-		// 		color="#ffffff"
+		// 		color="#000000"
 		// 		roughness={roughness}
 		// 		metalness={metalness}
-		// 		normalMap={
-		// 			new THREE.CanvasTexture(
-		// 				new FlakesTexture(),
-		// 				THREE.UVMapping,
-		// 				THREE.RepeatWrapping,
-		// 				THREE.RepeatWrapping
-		// 			)
-		// 		}
-		// 		normalScale={[0.01, 0.01]}
-		// 	/>
 
+		// 	/>
+	 	// 	{Array.from({ length: gridSize }, (_, i) => (
+		// 			<Once key={i} index={i} />
+
+		// 		))}
 		// </Instances>
 		<>
 			<group position={[0, -7, 8]}>
 				{Array.from({ length: gridSize }, (_, i) => (
 					// <Once key={i} index={i} />
-					<Box
-						castShadow
-						receiveShadow
-						args={[1, 8, 1]}
-						position={[
-							(i % gridWidth) - gridWidth / 2,
-							Math.random() * 4,
-							Math.floor(i / gridHeight) - gridHeight / 2,
-						]}
-					>
-						<meshStandardMaterial
-							color="#212121"
-							roughness={roughness}
-							metalness={metalness}
-							// normalMap={
-							// 	new THREE.CanvasTexture(
-							// 		new FlakesTexture(),
-							// 		THREE.UVMapping,
-							// 		THREE.RepeatWrapping,
-							// 		THREE.RepeatWrapping
-							// 	)
-							// }
-							// normalScale={[0.01, 0.01]}
-						/>
-					</Box>
+          <Boxx i={i} roughness={roughness} metalness={metalness} />
 				))}
+
 			</group>
 		</>
 	)
+}
+
+const Boxx = ({i=0, roughness=0, metalness=1}) => {
+  const y = Math.random() * 4
+  const ref = useRef<any>()
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime() * y
+    ref.current.position.y = y + Math.sin(t *  0.1)
+  })
+
+  return (
+    <Box
+    ref={ref}
+    castShadow
+    receiveShadow
+    args={[1, 8, 1]}
+    scale={0.97}
+    position={[
+      (i % gridWidth) - gridWidth / 2,
+      y,
+      Math.floor(i / gridHeight) - gridHeight / 2,
+    ]}
+  >
+            <meshStandardMaterial
+      color="#212121"
+      roughness={roughness}
+      metalness={metalness}
+      // normalMap={
+      // 	new THREE.CanvasTexture(
+      // 		new FlakesTexture(),
+      // 		THREE.UVMapping,
+      // 		THREE.RepeatWrapping,
+      // 		THREE.RepeatWrapping
+      // 	)
+      // }
+      // normalScale={[0.01, 0.01]}
+    />
+  </Box>
+  )
 }
 
 const Once = ({ index }: { index: number }) => {
